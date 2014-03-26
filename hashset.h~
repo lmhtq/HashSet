@@ -1,0 +1,105 @@
+typedef struct Node
+{
+	int data;		//element
+	Node * next;	//next element
+}
+
+class HashSet
+{
+	public :
+	{
+		//void HashSet();					//constructor
+		void HashSet(int size = 100);	//constructor 
+		void ~HashSet(int size = 100);	//deconstructor 
+		void add(int data);				//add data
+		void del(int data);				//delete data
+		void output();					//printf elements
+	}
+	protected :
+	{
+		// to be add code
+	}
+	private :
+	{
+		int size;			//the length of list
+		Node **LinkList;	//
+	}		
+}
+
+#include "hashset.h"
+void HashSet::HashSet(int size = 100)	//constructor
+{
+	if (100 > size)
+		size = 100; //the length is at least 100
+	**LinkList = new *Node[size];		//malloc
+	for (int i = 0; i < size; i++)
+	{
+		*LinkList[i] = NULL;			//init
+	}
+}
+
+void HashSet::~HashSet()		//deconstructor
+{
+	Node *p;
+	Node *q;
+	for (int i = 0; i < size; i++)	//scan
+	{
+		p = *LinkList[i];
+		q = p -> next;
+		while (NULL != q)
+		{
+			free(p);				//free the node with next isn't empty
+			p = q;
+			q = p -> next;
+		}
+		free(p);					//free the last one
+	}
+	free(LinkList);					//free the Head
+}
+
+void HashSet::add(int data)		//insert a data
+{
+	int it = data % size;		//index
+	Node* p = *LinkList[it];
+	while (p)
+	{
+		p = p -> next;			//find insert position
+	}
+	Node *q = new Node;
+	q -> data = data;			//insert data
+	q -> next = NULL;
+	p -> next = q;
+}
+
+void HashSet::del(int data)		//delete a data
+{
+	int it = data % size;		//index
+	Node *p = *LinkList[it];
+	Node *q = p -> next;
+	while (q -> data != data && q -> next != NULL)
+	{
+		p = q;
+		q = q -> next;			//find delete position
+	}
+	if (q -> next == NULL)		//the data isn't in the Hashset
+		return;
+	//q's position is to be delete
+	p -> next = q -> next;
+	free(q);
+}
+
+void HashSet::output()				//output the elements
+{
+	Node *p;
+	for (int i = 0; i < size; i++)	//scan
+	{
+		p = *LinkList[i] -> next;
+		if (NULL == p)				//skip empty ones
+			continue;
+		cout << "Index " << i << ":";
+		while (p)
+			cout << " " << p -> data;
+		cout << endl;
+	}
+}
+
